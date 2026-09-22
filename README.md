@@ -54,8 +54,58 @@ end up named, just like in the existing `toolkit.revit.*` libraries.
 
 ## Installation
 
+Install the latest version from NuGet.org:
+
 ```powershell
 dotnet new install VolocyNazad.Revit.Templates
+```
+
+Install a specific version:
+
+```powershell
+dotnet new install VolocyNazad.Revit.Templates::1.0.0
+```
+
+This is a `dotnet new` template package. Don't add it to a project with
+`dotnet add package`.
+
+### Updating
+
+Check for and install updates to all installed template packages:
+
+```powershell
+dotnet new update
+```
+
+To install a specific version explicitly:
+
+```powershell
+dotnet new install VolocyNazad.Revit.Templates::1.0.1 --force
+```
+
+Updating the template package affects only projects generated afterward.
+Projects already created from an earlier version are not modified.
+
+### Installing a local package
+
+Pack the repository and install the generated package while developing or
+before the package is published:
+
+```powershell
+dotnet pack ./Toolkit.Revit.Templates.csproj --configuration Release
+dotnet new install ./artifacts/VolocyNazad.Revit.Templates.0.0.0-dev.nupkg --force
+```
+
+List installed template packages and their versions:
+
+```powershell
+dotnet new uninstall
+```
+
+Remove this template package:
+
+```powershell
+dotnet new uninstall VolocyNazad.Revit.Templates
 ```
 
 ## Usage
@@ -116,12 +166,6 @@ dotnet new install ./source/projects/RevitAddin.Wpf
 dotnet new install ./source/solutions/Revit.Sample
 ```
 
-Uninstalling:
-
-```powershell
-dotnet new uninstall VolocyNazad.Revit.Templates
-```
-
 ## License
 
 The project is distributed under the [MIT](LICENSE.md) license.
@@ -132,4 +176,5 @@ The project is distributed under the [MIT](LICENSE.md) license.
 - [Repository guide and technology stack](docs/repository.md)
 
 ## Contributing
- [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
