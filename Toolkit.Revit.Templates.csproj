@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <ContentTargetFolders>content</ContentTargetFolders>
+        <NoWarn>NU5128</NoWarn>
+        <!-- Needed so that .template.config/**, .github/**, .gitignore, etc. under source/**
+             are picked up by the Content glob below: by default the SDK hides dot-folders/dot-files
+             from any wildcard items. -->
+        <NoDefaultExcludes>true</NoDefaultExcludes>
+        <!-- The project doesn't compile any code of its own (it only packages the contents
+             of source/** as content), but without this the SDK would still implicitly collect
+             the Compile glob "**/*.cs" and try to compile each template's .cs files
+             (Application.cs, SampleExtensions.cs, etc.) directly into this project. -->
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+        <PackageOutputPath>artifacts</PackageOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageType>Template</PackageType>
+        <PackageId>VolocyNazad.Revit.Templates</PackageId>
+        <Title>Revit Add-in Templates</Title>
+        <Authors>VolocyNazad</Authors>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Copyright>Copyright © VolocyNazad</Copyright>
+        <Description>dotnet new templates for Autodesk Revit add-ins built on the VolocyNazad.Revit.* stack.</Description>
+        <PackageTags>dotnet-new;templates;revit;autodesk;plugin</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/VolocyNazad/toolkit.revit.templates</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/VolocyNazad/toolkit.revit.templates</RepositoryUrl>
+        <PackageReleaseNotes>https://github.com/VolocyNazad/toolkit.revit.templates/blob/main/CHANGELOG.md</PackageReleaseNotes>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    </PropertyGroup>
+
+    <!-- MinVer: versions the templates package from git tags -->
+    <PropertyGroup>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+        <MinVerDefaultPreReleaseIdentifiers>dev</MinVerDefaultPreReleaseIdentifiers>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MinVer" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="" Visible="false" />
+        <None Include="LICENSE.md" Pack="true" PackagePath="" Visible="false" />
+        <Content Include="source\**\*" Exclude="source\**\bin\**;source\**\obj\**;source\**\.vs\**;source\**\output\**" />
+    </ItemGroup>
+
+</Project>

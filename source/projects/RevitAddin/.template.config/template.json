@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "VolocyNazad",
+  "classifications": [ "Revit", "Add-in" ],
+  "identity": "VolocyNazad.Revit.Templates.Addin",
+  "name": "Revit Add-in (minimal)",
+  "description": "Minimal Autodesk Revit plugin on VolocyNazad.Revit.Sdk: a single IExternalCommand and a ribbon button, no WPF/MVVM.",
+  "shortName": "revit-addin",
+  "sourceName": "RevitAddin",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "RevitAddin.csproj" }
+  ]
+}

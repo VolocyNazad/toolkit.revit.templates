@@ -1,0 +1,82 @@
+name: Publish NuGet package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    outputs:
+      patch: ${{ steps.release.outputs.patch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify release tag and successful CI for this commit
+        id: release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tags = @(git tag --points-at HEAD | Where-Object { $_ -match '^0\.0\.(0|[1-9][0-9]*)$' })
+          if ($LASTEXITCODE -ne 0 -or $tags.Count -ne 1) { throw 'Expected exactly one release tag 0.0.N on HEAD.' }
+          $patch = ($tags[0] -split '\.')[2]
+          $response = gh api "repos/$env:GITHUB_REPOSITORY/actions/workflows/build-and-test.yml/runs?head_sha=$env:GITHUB_SHA&event=push&status=success&per_page=100"
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot verify CI status.' }
+          $runs = @((($response -join "`n") | ConvertFrom-Json).workflow_runs | Where-Object { $_.head_sha -eq $env:GITHUB_SHA -and $_.conclusion -eq 'success' })
+          if ($runs.Count -eq 0) { throw 'Run CI successfully for this exact commit before publishing.' }
+          "patch=$patch" >> $env:GITHUB_OUTPUT
+
+  publish:
+    needs: verify
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release_2021.1.9, Release_2023.0.0, Release_2025.0.0]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Pack
+        run: dotnet pack src/Revit.Sample/Revit.Sample.csproj --configuration "${{ matrix.configuration }}" -p:Platform=x64 --output release-packages /nologo
+      - name: Verify package identity and version
+        shell: pwsh
+        env:
+          RELEASE_PATCH: ${{ needs.verify.outputs.patch }}
+          BUILD_CONFIGURATION: ${{ matrix.configuration }}
+        run: |
+          $major = ($env:BUILD_CONFIGURATION -split '_')[1].Split('.')[0]
+          $expectedVersion = "$major.0.$env:RELEASE_PATCH"
+          $packages = @(Get-ChildItem release-packages -Filter *.nupkg)
+          if ($packages.Count -ne 1) { throw 'Expected exactly one NuGet package.' }
+          $archive = [System.IO.Compression.ZipFile]::OpenRead($packages[0].FullName)
+          try {
+            $specs = @($archive.Entries | Where-Object FullName -like '*.nuspec')
+            if ($specs.Count -ne 1) { throw 'Expected exactly one nuspec.' }
+            $reader = [System.IO.StreamReader]::new($specs[0].Open())
+            try { [xml]$spec = $reader.ReadToEnd() } finally { $reader.Dispose() }
+            if ($spec.package.metadata.id -ne 'VolocyNazad.Revit.Sample' -or $spec.package.metadata.version -ne $expectedVersion) {
+              throw "Unexpected package identity/version. Expected VolocyNazad.Revit.Sample $expectedVersion."
+            }
+          } finally { $archive.Dispose() }
+      - name: Publish
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          foreach ($package in Get-ChildItem release-packages -Filter *.nupkg) {
+            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+            if ($LASTEXITCODE -ne 0) { throw 'NuGet push failed.' }
+          }

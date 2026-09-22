@@ -1,0 +1,10 @@
+<Project>
+
+    <PropertyGroup>
+        <!-- Nullable/ImplicitUsings/LangVersion are set by VolocyNazad.Revit.Sdk -->
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <Platforms>x64</Platforms>
+    </PropertyGroup>
+
+</Project>

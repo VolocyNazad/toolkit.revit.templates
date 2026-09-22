@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "VolocyNazad",
+  "classifications": [
+    "Revit",
+    "Library",
+    "NuGet"
+  ],
+  "identity": "VolocyNazad.Revit.Templates.LibRepo",
+  "name": "Revit library repo (nupkg)",
+  "description": "Skeleton for a standalone library repository at the toolkit.revit.* level for Autodesk Revit: src/ + tests/, MinVer versioning, packaged into NuGet, README/AGENTS.md/LICENSE/CI. Use a name of the form Revit.<Feature>, e.g. Revit.Foo.",
+  "shortName": "revit-lib-repo",
+  "sourceName": "Revit.Sample",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "symbols": {
+    "nameLower": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "name",
+        "toLower": true
+      }
+    },
+    "repoSlug": {
+      "type": "generated",
+      "generator": "join",
+      "parameters": {
+        "separator": "",
+        "symbols": [
+          {
+            "type": "const",
+            "value": "toolkit."
+          },
+          {
+            "type": "ref",
+            "value": "nameLower"
+          }
+        ]
+      },
+      "replaces": "toolkit.revit.sample"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "src/Revit.Sample/Revit.Sample.csproj"
+    }
+  ]
+}

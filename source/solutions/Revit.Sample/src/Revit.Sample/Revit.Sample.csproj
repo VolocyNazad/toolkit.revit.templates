@@ -1,0 +1,69 @@
+<Project Sdk="VolocyNazad.Revit.Sdk/1.0.45">
+
+    <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Authors>VolocyNazad</Authors>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Copyright>Copyright © VolocyNazad</Copyright>
+        <Description>TODO: describe the library.</Description>
+        <PackageType>Dependency</PackageType>
+        <PackageTags>autodesk;revit;api;</PackageTags>
+        <PackageId>VolocyNazad.Revit.Sample</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/VolocyNazad/toolkit.revit.sample</PackageProjectUrl>
+        <PackageOutputPath>..\..\artifacts\</PackageOutputPath>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/VolocyNazad/toolkit.revit.sample</RepositoryUrl>
+        <PackageReleaseNotes>https://github.com/VolocyNazad/toolkit.revit.sample/blob/main/CHANGELOG.md</PackageReleaseNotes>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="" Visible="false" />
+        <None Include="..\..\LICENSE.md" Pack="true" PackagePath="" Visible="false" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <Platform>x64</Platform>
+        <Configurations>Debug_2021.1.9;Debug_2023.0.0;Debug_2025.0.0;Release_2021.1.9;Release_2023.0.0;Release_2025.0.0</Configurations>
+    </PropertyGroup>
+
+    <!-- Tags 0.0.N provide the patch; each Revit configuration has its own package major. -->
+    <PropertyGroup>
+        <MinVerTagPrefix></MinVerTagPrefix>
+        <MinVerMinimumMajorMinor>0.0</MinVerMinimumMajorMinor>
+        <MinVerDefaultPreReleaseIdentifiers>dev</MinVerDefaultPreReleaseIdentifiers>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MinVer" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="PolySharp" Version="1.16.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion)" />
+    </ItemGroup>
+
+  <Target Name="ApplyRevitVersion" AfterTargets="MinVer" BeforeTargets="GetAssemblyVersion;GenerateNuspec;CoreCompile">
+    <PropertyGroup>
+      <!-- AssemblyVersion/FileVersion — numbers only (System.Version does not support suffixes) -->
+      <AssemblyVersion>$(MajorRevitVersion).0.$(MinVerPatch)</AssemblyVersion>
+      <FileVersion>$(MajorRevitVersion).0.$(MinVerPatch)</FileVersion>
+
+      <!-- Version/PackageVersion — with a "-dev.N" suffix if the build is not from a tagged commit -->
+      <Version Condition="'$(MinVerPreRelease)' == ''">$(MajorRevitVersion).0.$(MinVerPatch)</Version>
+      <Version Condition="'$(MinVerPreRelease)' != ''">$(MajorRevitVersion).0.$(MinVerPatch)-$(MinVerPreRelease)</Version>
+      <PackageVersion>$(Version)</PackageVersion>
+    </PropertyGroup>
+  </Target>
+
+</Project>

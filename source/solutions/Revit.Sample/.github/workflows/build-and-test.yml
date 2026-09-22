@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['0.0.*']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release_2021.1.9, Release_2023.0.0, Release_2025.0.0]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: 8.0.x # Runtime for the net8.0 test target.
+      - name: Build
+        run: dotnet build Revit.Sample.slnx --configuration "${{ matrix.configuration }}" -p:Platform=x64 /nologo
+      # The initial test project is empty. Remove --ignore-exit-code 8 after adding tests.
+      - name: Run headless tests
+        run: dotnet test --project tests/Revit.Sample.Tests/Revit.Sample.Tests.csproj --configuration "${{ matrix.configuration }}" -p:Platform=x64 --no-build --ignore-exit-code 8
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VolocyNazad.Revit.Sample-${{ matrix.configuration }}
+          path: artifacts/*.nupkg
+          if-no-files-found: error

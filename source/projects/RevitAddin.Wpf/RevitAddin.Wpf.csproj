@@ -1,0 +1,30 @@
+<Project Sdk="VolocyNazad.Revit.Sdk/1.0.45">
+
+    <PropertyGroup>
+        <AssemblyName>RevitAddin.Wpf</AssemblyName>
+        <RootNamespace>RevitAddin.Wpf</RootNamespace>
+        <UseWPF>true</UseWPF>
+        <Platform>x64</Platform>
+        <Configurations>Debug_2025;Release_2025</Configurations>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GenerateAddinOnBuild>true</GenerateAddinOnBuild>
+        <AddinOutputDirectory>$(MSBuildProjectDirectory)\output</AddinOutputDirectory>
+        <Authors>VolocyNazad</Authors>
+        <LaunchRevit>true</LaunchRevit>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ExternalApplication Include="RevitAddin.Wpf">
+            <Name>RevitAddin.Wpf</Name>
+            <FullClassName>RevitAddin.Wpf.Application</FullClassName>
+        </ExternalApplication>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion)" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    </ItemGroup>
+
+</Project>

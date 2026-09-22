@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "VolocyNazad",
+  "classifications": [ "Revit", "Add-in", "WPF", "MVVM" ],
+  "identity": "VolocyNazad.Revit.Templates.AddinWpf",
+  "name": "Revit Add-in (WPF, MVVM)",
+  "description": "Autodesk Revit plugin with a WPF panel on VolocyNazad.Revit.Sdk and CommunityToolkit.Mvvm.",
+  "shortName": "revit-addin-wpf",
+  "sourceName": "RevitAddin.Wpf",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "RevitAddin.Wpf.csproj" }
+  ]
+}

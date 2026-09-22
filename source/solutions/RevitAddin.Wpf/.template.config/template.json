@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "VolocyNazad",
+  "classifications": [ "Revit", "Add-in", "WPF", "MVVM" ],
+  "identity": "VolocyNazad.Revit.Templates.AddinWpfRepo",
+  "name": "Revit Add-in repo (WPF, MVVM)",
+  "description": "Skeleton for a standalone Autodesk Revit plugin repository with a WPF panel on VolocyNazad.Revit.Sdk and CommunityToolkit.Mvvm: README/AGENTS.md/LICENSE/CI, no installer/build pipeline.",
+  "shortName": "revit-addin-wpf-repo",
+  "sourceName": "RevitAddin.Wpf",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "primaryOutputs": [
+    { "path": "src/RevitAddin.Wpf/RevitAddin.Wpf.csproj" }
+  ]
+}

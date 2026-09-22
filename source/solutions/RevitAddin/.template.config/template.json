@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "VolocyNazad",
+  "classifications": [ "Revit", "Add-in" ],
+  "identity": "VolocyNazad.Revit.Templates.AddinRepo",
+  "name": "Revit Add-in repo (minimal)",
+  "description": "Skeleton for a standalone Autodesk Revit plugin repository on VolocyNazad.Revit.Sdk: a single IExternalCommand, README/AGENTS.md/LICENSE/CI, no installer/build pipeline.",
+  "shortName": "revit-addin-repo",
+  "sourceName": "RevitAddin",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "primaryOutputs": [
+    { "path": "src/RevitAddin/RevitAddin.csproj" }
+  ]
+}
