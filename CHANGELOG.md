@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-22
+
 ### Added
 
 - Project templates for a minimal Revit add-in, a WPF Revit add-in, and a reusable Revit library.
