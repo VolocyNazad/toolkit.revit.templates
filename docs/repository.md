@@ -197,3 +197,5 @@ The templates package uses MinVer 8 with stable tags in the `vMAJOR.MINOR.PATCH`
 Smoke tests share scripts/Test-Templates.ps1 between local runs and CI. Each run installs the packed templates into an isolated registry, builds both library variants for Revit 2021/2023/2025 (including test projects), and validates generated solution repositories. Outputs use unique subdirectories; existing installations and previous results are preserved.
 
 Revit projects use VolocyNazad.Revit.Sdk 1.0.45.
+
+The tagged commit must already contain the release section in `CHANGELOG.md` with an empty `Unreleased` section above it; the publish workflow stops otherwise. See the [release changelog policy](policies/development.md#release-changelog).
