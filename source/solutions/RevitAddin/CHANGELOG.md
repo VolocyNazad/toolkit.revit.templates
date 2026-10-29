@@ -8,6 +8,7 @@
 
 ### Added
 
+- Branching policy: `main` holds the released state, `dev` integrates the next release, and changes arrive through feature, fix, release and hotfix branches.
 - Validate required repository files, navigation links, and Solution Items in CI.
 
 ### Changed

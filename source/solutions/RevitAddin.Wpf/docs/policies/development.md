@@ -38,4 +38,4 @@ removed managed files. Solution templates follow the same contract.
 
 Keep the root `.editorconfig` in the solution and apply its repository-wide encoding, line-ending and trailing-whitespace rules. Repository-specific sections may add stricter language rules. Update the file deliberately when formatting conventions change; do not replace specialized rules with the shared minimum.
 
-Pin VolocyNazad.Revit.Sdk to 1.0.45 consistently across template projects and tests.
+Pin VolocyNazad.Revit.Sdk to 1.0.45 consistently across template projects and tests. Branching follows the [branching policy](branching.md): `main` holds the released state, `dev` integrates the next release, and every change reaches them through a short-lived branch and a pull request.
