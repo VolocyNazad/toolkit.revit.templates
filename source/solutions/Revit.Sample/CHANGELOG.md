@@ -13,6 +13,8 @@
 
 ### Changed
 
+- Document the commit message policy: the Conventional Commits type set, breaking-change markers and subject rules.
+
 - Update VolocyNazad.Revit.Sdk from 1.0.44 to 1.0.45.
 
 - Establish a shared EditorConfig baseline and use the repository-policy validator as the single structural CI check.
