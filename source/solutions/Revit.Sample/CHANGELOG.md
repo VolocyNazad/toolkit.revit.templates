@@ -13,6 +13,8 @@
 
 ### Changed
 
+- Move the commit message policy to `docs/policies/commits.md` and require it in the repository validator.
+
 - Document the commit message policy: the Conventional Commits type set, breaking-change markers and subject rules.
 
 - Update VolocyNazad.Revit.Sdk from 1.0.44 to 1.0.45.
