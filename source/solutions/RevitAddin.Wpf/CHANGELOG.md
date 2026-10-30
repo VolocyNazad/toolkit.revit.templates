@@ -8,6 +8,9 @@
 
 ### Added
 
+- Add a testing policy: test kinds, Revit version coverage, naming, isolation and the manual smoke check.
+- Add a benchmark policy: when performance is measured, how, and how results are reported.
+
 - Branching policy: `main` holds the released state, `dev` integrates the next release, and changes arrive through feature, fix, release and hotfix branches.
 - Validate required repository files, navigation links, and Solution Items in CI.
 
