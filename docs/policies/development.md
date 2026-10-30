@@ -21,12 +21,13 @@ Commit messages follow the [commit message policy](commits.md).
 Don't `git push` - commit locally and leave the push to the user, unless
 they explicitly ask you to push.
 
-Keep `CHANGELOG.md` up to date, in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
-format - add an entry under `## [Unreleased]` (in the appropriate
-category: Added/Changed/Fixed/Removed/...) as part of the same change,
-not in a separate pass later.
+Branching follows the [branching policy](branching.md): `main` holds the released state,
+`dev` integrates the next release, and every change reaches them through a short-lived
+branch and a pull request.
 
-## Release changelog Branching follows the [branching policy](branching.md): `main` holds the released state, `dev` integrates the next release, and every change reaches them through a short-lived branch and a pull request. Before creating a release tag, move the content of `## [Unreleased]` in `CHANGELOG.md` into a new `## [VERSION] - YYYY-MM-DD` section directly below it, where `VERSION` is the tag without a leading `v`, and leave `## [Unreleased]` empty. Commit that change and create the tag on that commit, so the changelog at the tagged commit names the released version and carries no unreleased entries. While moving the entries, review them against the previous release: keep changes a consumer of that release can observe, merge related entries, and drop fixes for behavior that was never released. The publish workflow enforces this before building: it refuses to publish when `## [Unreleased]` contains any entry or when the changelog has no section for the tagged version. Empty category headings under `Unreleased` are tolerated.  ## .NET SDK selection
+Keep [CHANGELOG.md](../../CHANGELOG.md) up to date as the [changelog policy](changelog.md) requires.
+
+## .NET SDK selection
 
 Use the repository-root `global.json` for local builds and CI: SDK `10.0.103` or a later stable SDK in the `10.0` major/minor line (`rollForward: latestFeature`, `allowPrerelease: false`). Do not roll forward to another major/minor line without updating this policy and `global.json` together. GitHub Actions setup steps must read `global-json-file: global.json` after checkout. Additional SDKs may be installed to supply runtimes for older test targets; they do not replace the SDK selected by `global.json`. This policy does not change project target frameworks.
 
@@ -45,5 +46,6 @@ removed managed files. Solution templates follow the same contract.
 
 Keep the root `.editorconfig` in the solution and apply its repository-wide encoding, line-ending and trailing-whitespace rules. Repository-specific sections may add stricter language rules. Update the file deliberately when formatting conventions change; do not replace specialized rules with the shared minimum.
 
-Template validation must use the shared smoke-test script and cover all declared library Revit versions and generated repository policies. Use isolated template registries. 
-Pin VolocyNazad.Revit.Sdk to 1.0.45 consistently across template projects and tests. 
+Template validation must use the shared smoke-test script and cover all declared library Revit versions and generated repository policies. Use isolated template registries.
+
+Pin VolocyNazad.Revit.Sdk to 1.0.45 consistently across template projects and tests.

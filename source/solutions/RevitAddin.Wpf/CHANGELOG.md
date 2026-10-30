@@ -13,6 +13,8 @@
 
 ### Changed
 
+- Move the changelog policy to `docs/policies/changelog.md` and require it in the repository validator.
+
 - Move the commit message policy to `docs/policies/commits.md` and require it in the repository validator.
 
 - Document the commit message policy: the Conventional Commits type set, breaking-change markers and subject rules.

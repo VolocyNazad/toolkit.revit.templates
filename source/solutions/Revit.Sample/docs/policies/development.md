@@ -15,9 +15,13 @@ Commit messages follow the [commit message policy](commits.md).
 
 Don't `git push` - commit locally and leave pushing to the user, unless they explicitly ask for a push.
 
+Branching follows the [branching policy](branching.md): `main` holds the released state,
+`dev` integrates the next release, and every change reaches them through a short-lived
+branch and a pull request.
+
 Tests that touch live Revit API objects must use `Nice3point.TUnit.Revit` (see the [repository guide](../repository.md) for stack/testing notes for when that's needed vs plain xunit) - it runs inside a real Revit process, so it can't be used for tests that exercise `RevitAPIUI`.
 
-Keep `CHANGELOG.md` up to date, in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format - add an entry under `## [Unreleased]` (in the right category: Added/Changed/Fixed/Removed/...) as part of the same change, not as a separate follow-up.
+Keep [CHANGELOG.md](../../CHANGELOG.md) up to date as the [changelog policy](changelog.md) requires.
 
 ## .NET SDK selection
 
@@ -57,4 +61,4 @@ removed managed files. Solution templates follow the same contract.
 
 Keep the root `.editorconfig` in the solution and apply its repository-wide encoding, line-ending and trailing-whitespace rules. Repository-specific sections may add stricter language rules. Update the file deliberately when formatting conventions change; do not replace specialized rules with the shared minimum.
 
-Pin VolocyNazad.Revit.Sdk to 1.0.45 consistently across template projects and tests. Branching follows the [branching policy](branching.md): `main` holds the released state, `dev` integrates the next release, and every change reaches them through a short-lived branch and a pull request.
+Pin VolocyNazad.Revit.Sdk to 1.0.45 consistently across template projects and tests.
