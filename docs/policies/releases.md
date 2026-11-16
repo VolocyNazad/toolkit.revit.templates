@@ -81,9 +81,8 @@ The workflow runs on `workflow_dispatch`; a tag push alone does not publish. It:
   exactly one stable tag, `CHANGELOG.md` must have an empty `## [Unreleased]` and exactly one
   `## [VERSION] - YYYY-MM-DD` section for the tag directly below it, and `HEAD` must be an ancestor
   of `origin/main`;
-- packs the package, then installs and builds every template from it with
-  `./scripts/Test-Templates.ps1 -SkipPack`, so a published package is one that generated a building
-  project for each short name;
+- packs the package and installs that package with `./scripts/Test-Templates.ps1`, so the release is
+  one that generated a building project for each short name;
 - verifies the package id and version, then pushes it to nuget.org.
 
 After the pipeline, inspect the package on nuget.org: the version, the README and the template list.

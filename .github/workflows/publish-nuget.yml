@@ -3,112 +3,68 @@ name: Publish NuGet package
 on:
   workflow_dispatch:
 
+concurrency:
+  group: publish-nuget-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  ContinuousIntegrationBuild: true
+
 jobs:
   publish:
     name: windows-latest
     runs-on: windows-latest
+    timeout-minutes: 45
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # for minver
+    - name: Checkout code
+      uses: actions/checkout@v7.0.1
+      with:
+        fetch-depth: 0 # for MinVer and the tag check
+        persist-credentials: false
+    - name: Verify release tag, changelog and branch
+      shell: pwsh
+      run: ./scripts/Verify-Release.ps1 -FromHeadTag -AncestorOf main -TagPrefix v
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v5.4.0
+      with:
+        global-json-file: global.json
+        cache: true
+        cache-dependency-path: |
+          global.json
+          NuGet.config
+    - name: Pack, install and validate all templates
+      shell: pwsh
+      run: ./scripts/Test-Templates.ps1
+    - name: Verify NuGet package
+      shell: pwsh
+      run: |
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $packages = @(Get-ChildItem "artifacts" -Recurse -File -Filter *.nupkg)
+        if ($packages.Count -ne 1) { throw "Expected exactly one NuGet package, found $($packages.Count)." }
+        $archive = [System.IO.Compression.ZipFile]::OpenRead($packages[0].FullName)
+        try {
+          $entries = @($archive.Entries | Where-Object { $_.FullName -like '*.nuspec' })
+          if ($entries.Count -ne 1) { throw "Expected exactly one nuspec in $($packages[0].Name)." }
+          $reader = [System.IO.StreamReader]::new($entries[0].Open())
+          try { [xml]$nuspec = $reader.ReadToEnd() } finally { $reader.Dispose() }
+        } finally { $archive.Dispose() }
+        $id = $nuspec.SelectSingleNode("/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='id']").InnerText
+        $version = $nuspec.SelectSingleNode("/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='version']").InnerText
+        if ($id -ne 'VolocyNazad.Revit.Templates') { throw "Unexpected package id '$id'." }
+        $tag = @(git tag --points-at HEAD | Where-Object { $_ -match '^v\d+\.\d+\.\d+$' })[0]
+        $expectedVersion = $tag.Substring(1)
+        if ($version -ne $expectedVersion) { throw "Package version '$version' does not match expected release version '$expectedVersion'." }
 
-      - name: Verify release tag
-
-        shell: pwsh
-
-        run: |
-
-          $tags = @(git tag --points-at HEAD | Where-Object { $_ -match '^v\d+\.\d+\.\d+$' })
-
-          if ($tags.Count -ne 1) {
-
-            throw "The selected commit must have exactly one stable tag such as 'v1.2.3'."
-
-          }
-
-          "RELEASE_VERSION=$($tags[0].Substring(1))" | Out-File -FilePath $env:GITHUB_ENV -Append
-      - name: Verify release changelog
-        shell: pwsh
-        run: |
-          $tag = @(git tag --points-at HEAD | Where-Object { $_ -match '^v\d+\.\d+\.\d+$' })[0]
-          $version = $tag -replace '^v', ''
-          $lines = @(Get-Content -LiteralPath CHANGELOG.md -Encoding utf8)
-
-          $start = -1
-          for ($i = 0; $i -lt $lines.Count; $i++) {
-            if ($lines[$i] -match '^## \[Unreleased\]') { $start = $i; break }
-          }
-          if ($start -lt 0) {
-            throw "CHANGELOG.md has no '## [Unreleased]' section."
-          }
-
-          $pending = @()
-          for ($i = $start + 1; $i -lt $lines.Count -and $lines[$i] -notmatch '^## '; $i++) {
-            if ($lines[$i].Trim() -and $lines[$i] -notmatch '^###\s') { $pending += $lines[$i] }
-          }
-          if ($pending.Count -gt 0) {
-            throw "CHANGELOG.md still has $($pending.Count) unreleased line(s). Move them into the '## [$version]' section before publishing."
-          }
-
-          $heading = "## [$version]"
-          $released = @($lines | Where-Object { $_.StartsWith($heading, [StringComparison]::Ordinal) })
-          if ($released.Count -ne 1) {
-            throw "CHANGELOG.md must contain exactly one '$heading - YYYY-MM-DD' section for the release tag $tag."
-          }
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
-      - name: Pack templates
-        run: dotnet pack Toolkit.Revit.Templates.csproj --configuration Release /nologo
-
-      - name: Verify NuGet package
-
-        shell: pwsh
-
-        run: |
-
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-          $packages = @(Get-ChildItem "artifacts" -Recurse -File -Filter *.nupkg)
-
-          if ($packages.Count -ne 1) { throw "Expected exactly one NuGet package, found $($packages.Count)." }
-
-          $archive = [System.IO.Compression.ZipFile]::OpenRead($packages[0].FullName)
-
-          try {
-
-            $entries = @($archive.Entries | Where-Object { $_.FullName -like '*.nuspec' })
-
-            if ($entries.Count -ne 1) { throw "Expected exactly one nuspec in $($packages[0].Name)." }
-
-            $reader = [System.IO.StreamReader]::new($entries[0].Open())
-
-            try { [xml]$nuspec = $reader.ReadToEnd() } finally { $reader.Dispose() }
-
-          } finally { $archive.Dispose() }
-
-          $id = $nuspec.SelectSingleNode("/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='id']").InnerText
-
-          $version = $nuspec.SelectSingleNode("/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='version']").InnerText
-
-          if ($id -ne 'VolocyNazad.Revit.Templates') { throw "Unexpected package id '$id'." }
-
-          $expectedVersion = $env:RELEASE_VERSION
-
-          if ($version -ne $expectedVersion) { throw "Package version '$version' does not match expected release version '$expectedVersion'." }
-
-
-      - name: Publish NuGet package
-        run: |
-          $packages = @(Get-ChildItem "artifacts" -Recurse -File -Filter *.nupkg)
-
-          if ($packages.Count -ne 1) { throw "Expected exactly one validated NuGet package, found $($packages.Count)." }
-
-          foreach($file in $packages) {
-              dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-          }
+    - name: Publish NuGet package
+      run: |
+        $packages = @(Get-ChildItem "artifacts" -Recurse -File -Filter *.nupkg)
+        if ($packages.Count -ne 1) { throw "Expected exactly one validated NuGet package, found $($packages.Count)." }
+        foreach($file in $packages) {
+            dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        }
