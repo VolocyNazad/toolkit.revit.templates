@@ -1,0 +1,27 @@
+version: 2
+
+# Version updates target `dev`, the integration branch: `main` only carries released states, so a
+# dependency pull request must not land there directly. Dependabot reads this file from the default
+# branch, so the setting takes effect only after it reaches `main`.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: dev
+    groups:
+      actions:
+        patterns:
+          - '*'
+
+  # The root directory covers the packaging project and the template folders, which carry their own
+  # project files and pinned versions.
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: dev
+    groups:
+      nuget:
+        patterns:
+          - '*'
