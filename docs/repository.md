@@ -157,12 +157,12 @@ hand after generation.
 ## Documentation layout
 
 - `AGENTS.md` links to the required repository guidance.
-- `docs/policies/development.md` contains the development policy.
+- `docs/policies/` contains the repository policies; the [policy index](policies/README.md) says what each one covers.
 - `docs/repository.md` describes the project, repository structure, and technology stack.
 
 The root solution exposes the documentation files under a `docs` solution folder in Visual Studio, preserving their subfolder structure. When adding documentation files, also add them as solution items; solution folders do not automatically include new files.
 
-The root `global.json` selects stable .NET SDK 10.0 (minimum `10.0.103`, `rollForward: latestFeature`). CI and publishing install the SDK from this file. Additional SDK installations may provide older test runtimes. See the [SDK selection policy](policies/development.md#net-sdk-selection).
+The root `global.json` selects stable .NET SDK 10.0 (minimum `10.0.103`, `rollForward: latestFeature`). CI and publishing install the SDK from this file. Additional SDK installations may provide older test runtimes. See the [SDK selection policy](policies/build.md#sdk-selection).
 
 ## Template alignment
 
@@ -178,17 +178,17 @@ The library solution opts into Microsoft.Testing.Platform for xunit.v3 4.0 on SD
 
 ## Solution items
 
-The root solution exposes repository-level documents and configuration under `solutionItems`, GitHub files and maintenance scripts in matching subfolders, and documentation under `docs/`. The list is explicit, not a filesystem glob; keep links up to date when files change. See the [solution items policy](policies/development.md#solution-items).
+The root solution exposes repository-level documents and configuration under `solutionItems`, GitHub files and maintenance scripts in matching subfolders, and documentation under `docs/`. The list is explicit, not a filesystem glob; keep links up to date when files change. See the [solution items policy](policies/repository-maintenance.md#solution-items).
 ## Repository validation
 
 `scripts/Validate-Repository.ps1` enforces the required repository documents,
 their navigation links, and complete, valid Solution Items. The
 `.github/workflows/repository-policy.yml` workflow runs it for pushes and pull
-requests. See the [development policy](policies/development.md#repository-validation).
+requests. See the [development policy](policies/repository-maintenance.md#repository-validation).
 
 ## Formatting
 
-The root `.editorconfig` defines the portable formatting baseline. Existing repositories may add stricter C# or analyzer-specific settings. See the [development policy](policies/development.md#formatting-baseline).
+The root `.editorconfig` defines the portable formatting baseline. Existing repositories may add stricter C# or analyzer-specific settings. See the [development policy](policies/repository-maintenance.md#formatting-baseline).
 
 ## Versioning and release tags
 
@@ -198,4 +198,4 @@ Smoke tests share scripts/Test-Templates.ps1 between local runs and CI. Each run
 
 Revit projects use VolocyNazad.Revit.Sdk 1.0.45.
 
-The tagged commit must already contain the release section in `CHANGELOG.md` with an empty `Unreleased` section above it; the publish workflow stops otherwise. See the [release changelog policy](policies/development.md#release-changelog).
+The tagged commit must already contain the release section in `CHANGELOG.md` with an empty `Unreleased` section above it; the publish workflow stops otherwise. See the [release changelog policy](policies/changelog.md#release).
